@@ -1,0 +1,148 @@
+import { GemMarketTrend } from '../types/gem';
+
+export const GEM_MARKET_TRENDS: GemMarketTrend[] = [
+  {
+    variety: 'Royal Blue Sapphire',
+    benchmarkPricePerCtUSD: {
+      min: 3200,
+      median: 5400,
+      max: 9500,
+    },
+    yearlyGrowthPercent: 14.8,
+    marketDemand: 'Very High',
+    priceHistory: [
+      { year: 2022, avgPricePerCt: 3800 },
+      { year: 2023, avgPricePerCt: 4250 },
+      { year: 2024, avgPricePerCt: 4800 },
+      { year: 2025, avgPricePerCt: 5200 },
+      { year: 2026, avgPricePerCt: 5850 },
+    ],
+    marketNotes: 'Unheated Ceylon royal blue (>3ct) commanding steep premiums in Geneva and Hong Kong auctions due to dwindling pit yields in Ratnapura.',
+  },
+  {
+    variety: 'Padparadscha Sapphire',
+    benchmarkPricePerCtUSD: {
+      min: 4500,
+      median: 7800,
+      max: 15000,
+    },
+    yearlyGrowthPercent: 18.2,
+    marketDemand: 'Very High',
+    priceHistory: [
+      { year: 2022, avgPricePerCt: 4900 },
+      { year: 2023, avgPricePerCt: 5700 },
+      { year: 2024, avgPricePerCt: 6600 },
+      { year: 2025, avgPricePerCt: 7400 },
+      { year: 2026, avgPricePerCt: 8250 },
+    ],
+    marketNotes: 'The rarest corundum variety. International demand from high-jewelry houses continues to outpace Sri Lankan supply.',
+  },
+  {
+    variety: 'Pigeon Blood Ruby',
+    benchmarkPricePerCtUSD: {
+      min: 5000,
+      median: 8900,
+      max: 22000,
+    },
+    yearlyGrowthPercent: 16.5,
+    marketDemand: 'Very High',
+    priceHistory: [
+      { year: 2022, avgPricePerCt: 5800 },
+      { year: 2023, avgPricePerCt: 6800 },
+      { year: 2024, avgPricePerCt: 7900 },
+      { year: 2025, avgPricePerCt: 8800 },
+      { year: 2026, avgPricePerCt: 9600 },
+    ],
+    marketNotes: 'Burmese origin unheated rubies remain the premier investment asset; Mozambique material covers mid-market volume.',
+  },
+  {
+    variety: 'Colombian Emerald',
+    benchmarkPricePerCtUSD: {
+      min: 4000,
+      median: 7500,
+      max: 18000,
+    },
+    yearlyGrowthPercent: 12.4,
+    marketDemand: 'High',
+    priceHistory: [
+      { year: 2022, avgPricePerCt: 5200 },
+      { year: 2023, avgPricePerCt: 5900 },
+      { year: 2024, avgPricePerCt: 6700 },
+      { year: 2025, avgPricePerCt: 7300 },
+      { year: 2026, avgPricePerCt: 7900 },
+    ],
+    marketNotes: 'Muzo & Chivor old-mine greens with minor cedarwood oil certification retain strong liquidity among European and Asian collectors.',
+  },
+  {
+    variety: 'Cobalt Spinel',
+    benchmarkPricePerCtUSD: {
+      min: 2800,
+      median: 4800,
+      max: 11000,
+    },
+    yearlyGrowthPercent: 26.4,
+    marketDemand: 'Very High',
+    priceHistory: [
+      { year: 2022, avgPricePerCt: 2100 },
+      { year: 2023, avgPricePerCt: 2800 },
+      { year: 2024, avgPricePerCt: 3700 },
+      { year: 2025, avgPricePerCt: 4400 },
+      { year: 2026, avgPricePerCt: 5200 },
+    ],
+    marketNotes: 'Fastest-rising gemstone category over the last 36 months. Luc Yen and Sri Lanka unheated electric blues command extraordinary bidding.',
+  },
+  {
+    variety: 'Alexandrite',
+    benchmarkPricePerCtUSD: {
+      min: 5500,
+      median: 9200,
+      max: 25000,
+    },
+    yearlyGrowthPercent: 15.0,
+    marketDemand: 'Niche / Luxury',
+    priceHistory: [
+      { year: 2022, avgPricePerCt: 6200 },
+      { year: 2023, avgPricePerCt: 7100 },
+      { year: 2024, avgPricePerCt: 8200 },
+      { year: 2025, avgPricePerCt: 9100 },
+      { year: 2026, avgPricePerCt: 9900 },
+    ],
+    marketNotes: 'Specimens exceeding 1.5 carats with >85% color change are extraordinarily scarce globally; premier heirloom status.',
+  },
+  {
+    variety: 'Yellow Sapphire',
+    benchmarkPricePerCtUSD: {
+      min: 800,
+      median: 1400,
+      max: 3200,
+    },
+    yearlyGrowthPercent: 8.7,
+    marketDemand: 'Steady',
+    priceHistory: [
+      { year: 2022, avgPricePerCt: 950 },
+      { year: 2023, avgPricePerCt: 1100 },
+      { year: 2024, avgPricePerCt: 1220 },
+      { year: 2025, avgPricePerCt: 1350 },
+      { year: 2026, avgPricePerCt: 1480 },
+    ],
+    marketNotes: 'High-turnover, consistent liquidity across South Asia and Vedic astrology (Pushparaga) markets.',
+  },
+  {
+    variety: 'Cornflower Sapphire',
+    benchmarkPricePerCtUSD: {
+      min: 2200,
+      median: 3900,
+      max: 6800,
+    },
+    yearlyGrowthPercent: 11.2,
+    marketDemand: 'High',
+    priceHistory: [
+      { year: 2022, avgPricePerCt: 2800 },
+      { year: 2023, avgPricePerCt: 3150 },
+      { year: 2024, avgPricePerCt: 3500 },
+      { year: 2025, avgPricePerCt: 3900 },
+      { year: 2026, avgPricePerCt: 4250 },
+    ],
+    marketNotes: 'High bridal engagement ring demand for lighter, pastel velvet blue tones.',
+  },
+];
