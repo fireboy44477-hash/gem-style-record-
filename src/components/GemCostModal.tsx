@@ -69,6 +69,7 @@ export const GemCostModal: React.FC<GemCostModalProps> = ({
   const [channel, setChannel] = useState('');
   const [dateAcquired, setDateAcquired] = useState(new Date().toISOString().split('T')[0]);
   const [notes, setNotes] = useState('');
+  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
 
   // 9 Types of Costs State
   const [costRoughPurchase, setCostRoughPurchase] = useState<string>('6000');
@@ -102,6 +103,7 @@ export const GemCostModal: React.FC<GemCostModalProps> = ({
       setChannel(initialGem.channel || '');
       setDateAcquired(initialGem.dateAcquired);
       setNotes(initialGem.notes || '');
+      setImageUrl(initialGem.imageUrl);
 
       setCostRoughPurchase(initialGem.costs.roughPurchase.toString());
       setCostLapidaryCutting(initialGem.costs.lapidaryCutting.toString());
@@ -190,6 +192,7 @@ export const GemCostModal: React.FC<GemCostModalProps> = ({
       channel: channel.trim(),
       dateAcquired,
       notes: notes.trim(),
+      imageUrl,
     };
 
     onSave(gemstoneToSave);
@@ -342,9 +345,63 @@ export const GemCostModal: React.FC<GemCostModalProps> = ({
           
           {/* SECTION 1: Gem Identification & Spec */}
           <div>
-            <h3 className="text-xs font-semibold text-cyan-400 uppercase tracking-wider mb-3">
-              1. Gemstone Spec & Provenance
-            </h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-xs font-semibold text-cyan-400 uppercase tracking-wider">
+                1. Gemstone Spec & Provenance
+              </h3>
+              {/* Photo pill */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="file"
+                  id="gemPhotoUploadModal"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (ev) => {
+                        setImageUrl(ev.target?.result as string);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="gemPhotoUploadModal"
+                  className="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 rounded-lg text-[11px] font-medium cursor-pointer transition flex items-center gap-1.5"
+                >
+                  <span>📷 {imageUrl ? 'Change Gem Photo' : 'Upload Gem Photo'}</span>
+                </label>
+                {imageUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setImageUrl(undefined)}
+                    className="text-[11px] text-rose-400 hover:text-rose-300"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* If photo exists, show a nice compact banner */}
+            {imageUrl && (
+              <div className="mb-3 p-2 bg-slate-950 rounded-xl border border-slate-800 flex items-center gap-3">
+                <img
+                  src={imageUrl}
+                  alt="Gemstone"
+                  className="w-14 h-14 rounded-lg object-cover border border-slate-700"
+                />
+                <div className="text-xs">
+                  <div className="font-semibold text-slate-200">Gemstone Photograph Attached</div>
+                  <div className="text-[11px] text-slate-400">
+                    Visible in inventory table, phone cards, and appraisal slips.
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
               
               <div>

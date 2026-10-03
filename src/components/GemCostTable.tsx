@@ -3,6 +3,7 @@ import { GemstoneItem, CurrencyCode, InventoryStatus, GemCostBreakdown } from '.
 import { calculateGemMetrics, calculateTotalCost } from '../utils/calculations';
 import { formatCurrency, formatPercent } from '../utils/currency';
 import { GEM_MARKET_TRENDS } from '../data/marketTrends';
+import { getDefaultImageForVariety } from '../assets/gemImages';
 import { 
   Search, 
   Filter, 
@@ -14,7 +15,9 @@ import {
   Layers, 
   Sparkles,
   ArrowUpDown,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Camera,
+  Gem,
 } from 'lucide-react';
 
 interface GemCostTableProps {
@@ -25,6 +28,7 @@ interface GemCostTableProps {
   onUpdateGemStatus: (id: string, newStatus: InventoryStatus, soldPrice?: number, buyerName?: string) => void;
   onQuickUpdateCost: (id: string, costKey: keyof GemCostBreakdown, value: number) => void;
   onQuickUpdatePrice: (id: string, targetPrice: number) => void;
+  onOpenPhotoModal: (gem: GemstoneItem) => void;
 }
 
 export const GemCostTable: React.FC<GemCostTableProps> = ({
@@ -35,6 +39,7 @@ export const GemCostTable: React.FC<GemCostTableProps> = ({
   onUpdateGemStatus,
   onQuickUpdateCost,
   onQuickUpdatePrice,
+  onOpenPhotoModal,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | InventoryStatus>('all');
@@ -274,23 +279,52 @@ export const GemCostTable: React.FC<GemCostTableProps> = ({
 
                         {/* Lot & Variety */}
                         <td className="py-3 px-3">
-                          <div className="font-sans font-semibold text-slate-100 flex items-center gap-1.5">
-                            <span>{gem.variety}</span>
-                            {isUnderMarketCost && (
-                              <span 
-                                title="Acquired below current international wholesale market median"
-                                className="text-[10px] text-cyan-400 font-mono"
-                              >
-                                ★
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-[11px] text-slate-400 font-mono flex items-center gap-1 mt-0.5">
-                            <span>{gem.lotNumber}</span>
-                            <span className="text-slate-600">·</span>
-                            <span>{gem.shape}</span>
-                            <span className="text-slate-600">·</span>
-                            <span className="truncate max-w-[110px]">{gem.origin}</span>
+                          <div className="flex items-center gap-2.5">
+                            {/* Gem Photo Thumbnail */}
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onOpenPhotoModal(gem);
+                              }}
+                              className="w-9 h-9 rounded-lg bg-slate-900 border border-slate-700/80 overflow-hidden shrink-0 relative group/photo cursor-pointer hover:border-cyan-400 transition"
+                              title="Click to view or change gem picture"
+                            >
+                              {gem.imageUrl || getDefaultImageForVariety(gem.variety) ? (
+                                <img
+                                  src={gem.imageUrl || getDefaultImageForVariety(gem.variety)}
+                                  alt={gem.variety}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-slate-500">
+                                  <Camera className="w-3.5 h-3.5 text-slate-400 group-hover/photo:text-cyan-300" />
+                                </div>
+                              )}
+                              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/photo:opacity-100 flex items-center justify-center transition">
+                                <Camera className="w-3.5 h-3.5 text-white" />
+                              </div>
+                            </div>
+
+                            <div>
+                              <div className="font-sans font-semibold text-slate-100 flex items-center gap-1.5">
+                                <span>{gem.variety}</span>
+                                {isUnderMarketCost && (
+                                  <span 
+                                    title="Acquired below current international wholesale market median"
+                                    className="text-[10px] text-cyan-400 font-mono"
+                                  >
+                                    ★
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-[11px] text-slate-400 font-mono flex items-center gap-1 mt-0.5">
+                                <span>{gem.lotNumber}</span>
+                                <span className="text-slate-600">·</span>
+                                <span>{gem.shape}</span>
+                                <span className="text-slate-600">·</span>
+                                <span className="truncate max-w-[110px]">{gem.origin}</span>
+                              </div>
+                            </div>
                           </div>
                         </td>
 

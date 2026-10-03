@@ -81,6 +81,7 @@ export interface GemstoneItem {
   dateAcquired: string;           // YYYY-MM-DD
   dateSold?: string;              // YYYY-MM-DD
   notes?: string;
+  imageUrl?: string;              // Base64 or URL picture of the gemstone
 }
 
 export type CurrencyCode = 'USD' | 'LKR' | 'EUR' | 'GBP' | 'THB' | 'HKD';

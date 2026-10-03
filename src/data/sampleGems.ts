@@ -1,4 +1,5 @@
 import { GemstoneItem } from '../types/gem';
+import { GEM_SPECIMEN_IMAGES } from '../assets/gemImages';
 
 export const INITIAL_GEM_INVENTORY: GemstoneItem[] = [
   {
@@ -15,6 +16,7 @@ export const INITIAL_GEM_INVENTORY: GemstoneItem[] = [
     cutWeightCts: 4.25,
     certLab: 'SSEF / GIA',
     certNumber: 'SSEF-119402',
+    imageUrl: GEM_SPECIMEN_IMAGES.sapphire,
     costs: {
       roughPurchase: 11500,
       lapidaryCutting: 450,
@@ -49,6 +51,7 @@ export const INITIAL_GEM_INVENTORY: GemstoneItem[] = [
     cutWeightCts: 2.85,
     certLab: 'Gübelin',
     certNumber: 'GUB-240188',
+    imageUrl: GEM_SPECIMEN_IMAGES.padparadscha,
     costs: {
       roughPurchase: 9800,
       lapidaryCutting: 380,
@@ -81,6 +84,7 @@ export const INITIAL_GEM_INVENTORY: GemstoneItem[] = [
     cutWeightCts: 1.95,
     certLab: 'GRS',
     certNumber: 'GRS-2025-10492',
+    imageUrl: GEM_SPECIMEN_IMAGES.ruby,
     costs: {
       roughPurchase: 7200,
       lapidaryCutting: 260,
@@ -114,6 +118,7 @@ export const INITIAL_GEM_INVENTORY: GemstoneItem[] = [
     cutWeightCts: 3.10,
     certLab: 'CDTEC / GRS',
     certNumber: 'CD-25890',
+    imageUrl: GEM_SPECIMEN_IMAGES.emerald,
     costs: {
       roughPurchase: 14000,
       lapidaryCutting: 550,

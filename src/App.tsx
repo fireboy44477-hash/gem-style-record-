@@ -5,11 +5,17 @@ import { calculateGemMetrics, calculateTotalCost } from './utils/calculations';
 import { TopNav } from './components/TopNav';
 import { SummaryMetrics } from './components/SummaryMetrics';
 import { GemCostTable } from './components/GemCostTable';
+import { MobileGemCardView } from './components/MobileGemCardView';
 import { CostBreakdownChart } from './components/CostBreakdownChart';
 import { ProfitRoiChart } from './components/ProfitRoiChart';
 import { MarketTrendsView } from './components/MarketTrendsView';
 import { RoiDecisionMatrix } from './components/RoiDecisionMatrix';
 import { GemCostModal } from './components/GemCostModal';
+import { GoogleSheetsSyncModal } from './components/GoogleSheetsSyncModal';
+import { GemPhotoModal } from './components/GemPhotoModal';
+import { ExecutiveReportModal } from './components/ExecutiveReportModal';
+import { initAuth, logoutGoogle } from './services/googleAuth';
+import { User } from 'firebase/auth';
 
 const STORAGE_KEY = 'gemmatrix_inventory_v1';
 const CURRENCY_KEY = 'gemmatrix_currency_pref';
@@ -43,11 +49,18 @@ export default function App() {
   });
 
   // Active View Tab
-  const [activeTab, setActiveTab] = useState<'table' | 'costs' | 'profit_roi' | 'market_trends' | 'decision'>('table');
+  const [activeTab, setActiveTab] = useState<'table' | 'mobile_chart' | 'costs' | 'profit_roi' | 'market_trends' | 'decision'>('table');
 
-  // Modal State
+  // Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingGem, setEditingGem] = useState<GemstoneItem | null>(null);
+
+  const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+
+  const [photoModalGem, setPhotoModalGem] = useState<GemstoneItem | null>(null);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   // Toast / notification feedback
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -58,6 +71,15 @@ export default function App() {
       setToastMessage(null);
     }, 3500);
   };
+
+  // Init Google Auth listener
+  useEffect(() => {
+    const unsubscribe = initAuth((user, token) => {
+      setCurrentUser(user);
+      setAccessToken(token);
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Persist gems to localStorage
   useEffect(() => {
@@ -146,8 +168,28 @@ export default function App() {
     showToast('Target asking price updated');
   };
 
+  const handleSavePhoto = (gemId: string, imageUrl: string | undefined) => {
+    setGems((prev) =>
+      prev.map((g) => {
+        if (g.id !== gemId) return g;
+        return { ...g, imageUrl };
+      })
+    );
+    showToast('Gemstone photo updated');
+  };
+
+  const handleImportGoogleGems = (imported: GemstoneItem[]) => {
+    setGems((prev) => {
+      // Merge imported gems by lotNumber or append
+      const existingLots = new Set(prev.map((g) => g.lotNumber.toLowerCase()));
+      const newItems = imported.filter((g) => !existingLots.has(g.lotNumber.toLowerCase()));
+      return [...newItems, ...prev];
+    });
+    showToast(`Merged ${imported.length} gemstones from Google Sheets`);
+  };
+
   const handleResetData = () => {
-    if (confirm('Reset inventory ledger back to default seed gemstones? Your custom edits will be replaced.')) {
+    if (confirm('Reset inventory ledger back to default sample gemstones? Your custom edits will be replaced.')) {
       setGems(INITIAL_GEM_INVENTORY);
       showToast('Inventory reset to sample gems catalog');
     }
@@ -249,20 +291,23 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#0b0f17] text-slate-100 flex flex-col font-sans">
       
-      {/* 3-Zone Top Bar */}
+      {/* 3-Zone Top Bar with Google Sheets & PWA install */}
       <TopNav
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         currency={currency}
         setCurrency={setCurrency}
         onOpenNewGemModal={handleOpenNew}
+        onOpenGoogleSheetsModal={() => setIsGoogleModalOpen(true)}
+        onOpenReportModal={() => setIsReportModalOpen(true)}
+        isGoogleConnected={!!currentUser && !!accessToken}
         onResetData={handleResetData}
         onExportCSV={handleExportCSV}
         totalGemsCount={gems.length}
       />
 
       {/* Main Viewport Content */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-6">
         
         {/* Executive Portfolio KPIs */}
         <SummaryMetrics gems={gems} currency={currency} />
@@ -277,6 +322,16 @@ export default function App() {
             onUpdateGemStatus={handleUpdateGemStatus}
             onQuickUpdateCost={handleQuickUpdateCost}
             onQuickUpdatePrice={handleQuickUpdatePrice}
+            onOpenPhotoModal={(gem) => setPhotoModalGem(gem)}
+          />
+        )}
+
+        {activeTab === 'mobile_chart' && (
+          <MobileGemCardView
+            gems={gems}
+            currency={currency}
+            onEditGem={handleOpenEdit}
+            onSelectGemForPhoto={(gem) => setPhotoModalGem(gem)}
           />
         )}
 
@@ -320,6 +375,41 @@ export default function App() {
         currency={currency}
       />
 
+      {/* Google Sheets Cloud Sync Modal */}
+      <GoogleSheetsSyncModal
+        isOpen={isGoogleModalOpen}
+        onClose={() => setIsGoogleModalOpen(false)}
+        gems={gems}
+        currency={currency}
+        onImportGems={handleImportGoogleGems}
+        currentUser={currentUser}
+        accessToken={accessToken}
+        onAuthSuccess={(user, token) => {
+          setCurrentUser(user);
+          setAccessToken(token);
+        }}
+        onLogout={() => {
+          setCurrentUser(null);
+          setAccessToken(null);
+        }}
+      />
+
+      {/* Gemstone Photography Upload / Camera Modal */}
+      <GemPhotoModal
+        isOpen={!!photoModalGem}
+        onClose={() => setPhotoModalGem(null)}
+        gem={photoModalGem}
+        onSavePhoto={handleSavePhoto}
+      />
+
+      {/* Executive Printable PDF Report Modal */}
+      <ExecutiveReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        gems={gems}
+        currency={currency}
+      />
+
       {/* Floating Action Feedback Toast */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-slate-900 border border-cyan-500/40 text-slate-100 text-xs px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 backdrop-blur-md animate-fade-in">
@@ -333,7 +423,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>GemMatrix · Gemstone Costing & Financial Intelligence System</span>
           <span className="font-mono text-[11px] text-slate-400">
-            Multi-Currency: USD · LKR · EUR · GBP · THB · HKD
+            Google Sheets Sync · PWA Ready · Mobile Chart Card System
           </span>
         </div>
       </footer>
